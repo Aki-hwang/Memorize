@@ -10,7 +10,39 @@ import Foundation //기본적인 스위프트를 사용할꺼야 뷰 같은 유�
 struct MemoryGame<Cardcontent> where Cardcontent: Equatable{ //제너릭을 위한 타입변수 <>
     //즉 Cardcontent 여기에 스트링이나 이미지 등이 올 수 있으니 제너릭으로 표현해 주는거야
     private(set) var cards:Array<Card> // var cards:[Card]
-    private var indexOfTheOneAndOnlyFaceUpCard: Int?
+    
+    private var indexOfTheOneAndOnlyFaceUpCard: Int? {
+        get{cards.indices.filter({cards[$0].isFaceUp}).oneAndOnly}
+//            let faceUpCardIndices = cards.indices.filter({index in cards[index].isFaceUp})// index in --> $0
+//            var faceUpCardIndices = [Int]()
+//            let faceUpCardIndices = cards.indices.filter({cards[$0].isFaceUp})
+//            return faceUpCardIndices.oneAndonly
+        set{cards.indices.forEach{cards[$0].isFaceUp = ($0 == newValue )}}
+    }
+//                    for index in cards.indices{
+//                        cards[index].isFaceUp = (index == newValue)
+////                        if index != newValue { //indexOfTheOneAndOnlyFaceUpCard == newVales
+////                            cards[index].isFaceUp = false
+////                        }else{
+////                            cards[index].isFaceUp = true
+////                        }
+//                    }
+//                }
+//
+//            }
+//
+//            for index in cards.indices {
+//                if cards[index].isFaceUp{
+//                    faceUpCardIndices.append(index)
+//                }
+//            }
+//            if faceUpCardIndices.count == 1{
+//                return faceUpCardIndices.first //배열의 첫번째를 반환
+//            }else {
+//                return nil
+//            }
+//        }
+
     
     mutating func choose(_ card: Card) {
 //        card.isFaceUp.toggle()
@@ -25,21 +57,19 @@ struct MemoryGame<Cardcontent> where Cardcontent: Equatable{ //제너릭을 위�
                     cards[chosenIndex].isMatched = true
                     cards[potentialMatchIndex].isMatched = true
                 }
-                indexOfTheOneAndOnlyFaceUpCard = nil
+                cards[chosenIndex].isFaceUp = true
             }else{
-                for index in cards.indices{
-                    cards[index].isFaceUp = false
+               
                 }
                 indexOfTheOneAndOnlyFaceUpCard = chosenIndex
             }
-            cards[chosenIndex].isFaceUp.toggle() //닐이 아니면 여기를 수행
+           
         } //let을 사용해서 옵셔널반환을 방어한대
 //        var chosenCard = cards[chosenIndex]//변수에 넣으면 바로 복사를 해 구조체니까
         //그래서 직접 변경해야해
         
-        print(cards)
         
-    }
+    
     func index(of card: Card) -> Int? { //옵셔널로 해서 카드가 없으면 닐 반환nil
         for index in 0..<cards.count{
             if cards[index].id == card.id{
@@ -49,7 +79,7 @@ struct MemoryGame<Cardcontent> where Cardcontent: Equatable{ //제너릭을 위�
         return nil //bogus!
     }
     init(numberOfPairesOfCards: Int, createCardContent: (Int) -> Cardcontent){
-        cards = Array<Card>()
+        cards = []
         //add numberOfPairesOfCards X2 card to cards array
         for pairIndex in 0..<numberOfPairesOfCards {
             let content: Cardcontent = createCardContent(pairIndex)
@@ -58,10 +88,21 @@ struct MemoryGame<Cardcontent> where Cardcontent: Equatable{ //제너릭을 위�
         }
     }
     struct Card: Identifiable {
-        var isFaceUp : Bool = false
-        var isMatched : Bool = false
-        var content: Cardcontent // 상관없어 쓰고 싶어
-        var id: Int
+        var isFaceUp = false
+        var isMatched = false
+        let content: Cardcontent // 상관없어 쓰고 싶어
+        let id: Int
     }
-    
 }
+
+    extension Array{
+        var oneAndOnly: Element? {// 상관없음을반환할꺼야
+            if count == 1 {
+                return first
+            }else{
+                return nil
+            }
+    }
+}
+
+   
