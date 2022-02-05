@@ -79,7 +79,10 @@ struct CardView: View {
                 shape.strokeBorder(lineWidth: 3) //테두리를 안쪽으로만 칠하게 해죠
                 Text(card.content)
                 .font(.largeTitle)
-            }else{
+            }else if card.isMatched{
+                shape.opacity(0)
+            }
+            else{
                 shape.fill()
             }
         }
